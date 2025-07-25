@@ -9,7 +9,7 @@ import {
 import VideoList from "./VideoList";
 import UploadVideo from "./UploadVideo";
 import AdminPanel from "./AdminPanel";
-import "./App.css"; // 👈 make sure this CSS file exists
+import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -34,14 +34,16 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
-      <h1>🎥 Voting App</h1>
+    <div className="app-container">
+      <h1 className="app-title">🎥 Voting App</h1>
       {user ? (
         <>
-          <p className="welcome-text">Welcome, {user.email}</p>
-          <button className="btn logout-btn" onClick={logout}>
-            Logout
-          </button>
+          <div className="user-info">
+            <p className="welcome-text">Welcome, {user.email}</p>
+            <button className="btn logout" onClick={logout}>
+              Logout
+            </button>
+          </div>
 
           {user.email === "23u0025@students.git.edu" && (
             <UploadVideo user={user} />
@@ -52,7 +54,7 @@ function App() {
           {user.email === "23u0025@students.git.edu" && <AdminPanel />}
         </>
       ) : (
-        <button className="btn login-btn" onClick={login}>
+        <button className="btn login" onClick={login}>
           Login with Git Email
         </button>
       )}
