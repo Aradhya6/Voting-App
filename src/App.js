@@ -74,7 +74,7 @@ function App() {
         </>
       ) : (
         <button className="btn login" onClick={login}>
-          Login with Git Email
+          Login
         </button>
       )}
     </div>
