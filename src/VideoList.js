@@ -85,7 +85,7 @@ function VideoList({ user }) {
                             Your browser does not support the video tag.
                         </video>
                         <br />
-                        // Inside map return
+
                         <button onClick={() => handleLike(video.id)}>
                             {video.voters?.includes(user.email) ? "✅ Voted" : "❤️ Vote"}
                         </button>
