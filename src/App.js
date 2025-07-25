@@ -9,29 +9,20 @@ import {
 import VideoList from "./VideoList";
 import UploadVideo from "./UploadVideo";
 import AdminPanel from "./AdminPanel";
+import "./App.css"; // 👈 make sure this CSS file exists
 
 function App() {
   const [user, setUser] = useState(null);
   const provider = new GoogleAuthProvider();
-  const adminEmail = "23u0025@students.git.edu";
 
   const login = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const email = result.user.email;
-
-      if (!email.endsWith("@students.git.edu")) {
-        alert("Log in using  GIT students account.");
-        await signOut(auth); // Force sign out if not valid
-        return;
-      }
-
       setUser(result.user);
     } catch (error) {
       alert("Login failed");
     }
   };
-
 
   const logout = () => signOut(auth);
 
@@ -43,26 +34,27 @@ function App() {
   }, []);
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Voting App</h1>
+    <div className="container">
+      <h1>🎥 Voting App</h1>
       {user ? (
         <>
-          <p>Welcome, {user.email}</p>
-          <button onClick={logout}>Logout</button>
+          <p className="welcome-text">Welcome, {user.email}</p>
+          <button className="btn logout-btn" onClick={logout}>
+            Logout
+          </button>
 
-          {/* Only admin can upload and view admin panel */}
-          {user.email === adminEmail && (
-            <>
-              <UploadVideo user={user} />
-              <AdminPanel />
-            </>
+          {user.email === "23u0025@students.git.edu" && (
+            <UploadVideo user={user} />
           )}
 
-          {/* All users can view and vote */}
           <VideoList user={user} />
+
+          {user.email === "23u0025@students.git.edu" && <AdminPanel />}
         </>
       ) : (
-        <button onClick={login}>Login with Git Email</button>
+        <button className="btn login-btn" onClick={login}>
+          Login with Git Email
+        </button>
       )}
     </div>
   );
