@@ -13,12 +13,23 @@ import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [isGitEmail, setIsGitEmail] = useState(true);
   const provider = new GoogleAuthProvider();
 
   const login = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
+      const email = result.user.email;
+
+      if (!email.endsWith("@students.git.edu")) {
+        alert("Access denied. Please use your @students.git.edu email.");
+        await signOut(auth);
+        setIsGitEmail(false);
+        return;
+      }
+
       setUser(result.user);
+      setIsGitEmail(true);
     } catch (error) {
       alert("Login failed");
     }
@@ -28,15 +39,23 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      if (user && user.email.endsWith("@students.git.edu")) {
+        setUser(user);
+        setIsGitEmail(true);
+      } else {
+        setUser(null);
+        setIsGitEmail(false);
+      }
     });
+
     return () => unsubscribe();
   }, []);
 
   return (
     <div className="app-container">
       <h1 className="app-title">🎥 Voting App</h1>
-      {user ? (
+
+      {user && isGitEmail ? (
         <>
           <div className="user-info">
             <p className="welcome-text">Welcome, {user.email}</p>
