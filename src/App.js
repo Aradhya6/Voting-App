@@ -13,7 +13,7 @@ import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [isGitEmail, setIsGitEmail] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const provider = new GoogleAuthProvider();
 
   const login = async () => {
@@ -24,38 +24,42 @@ function App() {
       if (!email.endsWith("@students.git.edu")) {
         alert("Access denied. Please use your @students.git.edu email.");
         await signOut(auth);
-        setIsGitEmail(false);
         return;
       }
 
       setUser(result.user);
-      setIsGitEmail(true);
     } catch (error) {
       alert("Login failed");
+      console.error(error);
     }
   };
 
   const logout = () => signOut(auth);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.email.endsWith("@students.git.edu")) {
-        setUser(user);
-        setIsGitEmail(true);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser?.email?.endsWith("@students.git.edu")) {
+        setUser(currentUser);
       } else {
+        if (currentUser) {
+          alert("Access denied. Only @students.git.edu emails allowed.");
+          await signOut(auth);
+        }
         setUser(null);
-        setIsGitEmail(false);
       }
+      setCheckingAuth(false);
     });
 
     return () => unsubscribe();
   }, []);
 
+  if (checkingAuth) return <p>Loading...</p>;
+
   return (
     <div className="app-container">
       <h1 className="app-title">🎥 Voting App</h1>
 
-      {user && isGitEmail ? (
+      {user ? (
         <>
           <div className="user-info">
             <p className="welcome-text">Welcome, {user.email}</p>
@@ -74,7 +78,7 @@ function App() {
         </>
       ) : (
         <button className="btn login" onClick={login}>
-          Login
+          Login with GIT Email
         </button>
       )}
     </div>
